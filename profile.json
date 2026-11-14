@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-14T16:56:01.923Z",
+  "updatedAt": "2026-11-14T16:56:39.773Z",
   "children": [
     {
       "id": "twin-a",
@@ -12,7 +12,7 @@
       "id": "twin-b",
       "nickname": "PP",
       "birthDate": "2026-06-23",
-      "dueDate": "",
+      "dueDate": "2026-07-21",
       "color": "#FFD60A"
     }
   ],
