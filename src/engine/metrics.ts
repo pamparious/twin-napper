@@ -36,7 +36,13 @@ export function clip(startIso: string, endIso: string, key: string): [number, nu
   return [(from - startMs) / 60_000, (to - startMs) / 60_000]
 }
 
-export function togetherStats(events: SleepEvent[], childA: string, childB: string, now = new Date()): {
+export function togetherStats(
+  events: SleepEvent[],
+  childA: string,
+  childB: string,
+  now = new Date(),
+  dayCount = 7,
+): {
   overlapMin: number
   percent: number
 } {
@@ -44,7 +50,7 @@ export function togetherStats(events: SleepEvent[], childA: string, childB: stri
   let overlap = 0
   let sleepA = 0
   let sleepB = 0
-  for (let ago = 0; ago < 7; ago += 1) {
+  for (let ago = 0; ago < dayCount; ago += 1) {
     const key = shiftDateKey(today, -ago)
     const a = blocksOnDay(events, childA, key, now)
     const b = blocksOnDay(events, childB, key, now)

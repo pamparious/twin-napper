@@ -157,6 +157,14 @@ describe('recommendations', () => {
     expect(overridden.naps).toHaveLength(1)
   })
 
+  it('keeps the later naps while a nap is still running', () => {
+    const running = event({ kind: 'nap', start: on(0, 7, 30), end: null })
+    const plan = planChild(child(), [running], profile(), now)
+    expect(plan.headline).toMatch(/Likely awake around/)
+    expect(plan.naps[0]?.index).toBe(2)
+    expect(plan.bedtime).not.toBeNull()
+  })
+
   it('lines twins up on the earlier nap window', () => {
     const events = [
       event({ kind: 'night', childId: 'twin-a', start: on(-1, 19, 30), end: on(0, 7, 0) }),

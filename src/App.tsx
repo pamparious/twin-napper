@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
-import { formatLongDate, inClockRange } from './engine/time'
+import { inClockRange } from './engine/time'
 import { Home } from './screens/Home'
 import { ChildDetail } from './screens/ChildDetail'
 import { Settings } from './screens/Settings'
-import { Twins } from './screens/Twins'
+import { History } from './screens/History'
 import { statusLabel } from './state/store'
 import { useSnapshot, useStore } from './state/StoreContext'
 
-type Route = { name: 'home' } | { name: 'twins' } | { name: 'settings' } | { name: 'child'; id: string }
+type Route = { name: 'home' } | { name: 'history' } | { name: 'settings' } | { name: 'child'; id: string }
 
 export function App() {
   const store = useStore()
@@ -40,7 +40,7 @@ export function App() {
   return (
     <div className="app">
       <p className="sync" role="status">
-        {statusLabel(snap.status)} · {formatLongDate(now)}
+        {statusLabel(snap.status)}
       </p>
       {snap.updateReady && (
         <div className="banner">
@@ -57,7 +57,7 @@ export function App() {
         {route.name === 'child' && (
           <ChildDetail store={store} childId={route.id} now={now} onBack={() => setRoute({ name: 'home' })} onUndo={rememberUndo} />
         )}
-        {route.name === 'twins' && <Twins now={now} />}
+        {route.name === 'history' && <History now={now} />}
         {route.name === 'settings' && <Settings now={now} />}
       </div>
       {undo && (
@@ -78,8 +78,8 @@ export function App() {
         <button type="button" className={route.name === 'home' || route.name === 'child' ? 'tab on' : 'tab'} onClick={() => setRoute({ name: 'home' })}>
           Home
         </button>
-        <button type="button" className={route.name === 'twins' ? 'tab on' : 'tab'} onClick={() => setRoute({ name: 'twins' })}>
-          Twins
+        <button type="button" className={route.name === 'history' ? 'tab on' : 'tab'} onClick={() => setRoute({ name: 'history' })}>
+          History
         </button>
         <button type="button" className={route.name === 'settings' ? 'tab on' : 'tab'} onClick={() => setRoute({ name: 'settings' })}>
           Settings

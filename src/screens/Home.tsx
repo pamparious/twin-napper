@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { blankEvent, EditSheet } from '../components/EditSheet'
-import { addMinutes, formatClock, formatCounter, inClockRange, minutesOfDay, roundToFive } from '../engine/time'
+import { dayByKey, reconstructDays } from '../engine/days'
+import { addMinutes, dateKey, formatClock, formatCounter, formatDuration, formatLongDate, inClockRange, minutesOfDay, roundToFive } from '../engine/time'
 import { planChild, suggestedWakeTime, twinSyncPlan, type DayPlan } from '../engine/recommend'
 import { activeEvents, uid, type Child, type SleepEvent } from '../model'
 import type { Store } from '../state/store'
@@ -83,8 +84,9 @@ export function Home({
   return (
     <section className="home">
       <header className="top">
-        <p className="eyebrow">Today</p>
-        <h1>Twin Napper</h1>
+        <p className="eyebrow">Suggested day</p>
+        <h1>Today</h1>
+        <p className="subtitle">{formatLongDate(now)}</p>
       </header>
       {snap.catchUp && (
         <div className="banner">
@@ -96,7 +98,6 @@ export function Home({
       )}
       {snap.status.kind === 'auth' && <div className="banner warn">{snap.status.message}</div>}
       {shared && <p className="together">{shared.label}</p>}
-      <div className="spacer" />
       <div className="card-stack">
         {snap.profile.children.map((child, index) => (
           <ChildCard
@@ -104,6 +105,7 @@ export function Home({
             child={child}
             name={store.displayName(child.id, child.nickname)}
             plan={plans[index]}
+            rows={scheduleRows(plans[index], snap.events, child.id, now, running(child.id))}
             active={running(child.id)}
             awakeFrom={awakeFrom(snap.events, child.id)}
             now={now}
@@ -118,6 +120,8 @@ export function Home({
             onLog={() => setDraft(blankEvent(child.id, snap.profile, now))}
           />
         ))}
+      </div>
+      <div className="both-dock">
         <button type="button" className="button both" onClick={toggleBoth}>
           {bothAsleep ? 'Wake both' : 'Sleep both'}
         </button>
@@ -146,6 +150,7 @@ function ChildCard({
   child,
   name,
   plan,
+  rows,
   active,
   awakeFrom,
   now,
@@ -158,6 +163,7 @@ function ChildCard({
   child: Child
   name: string
   plan: DayPlan
+  rows: ScheduleRow[]
   active?: SleepEvent
   awakeFrom: Date | null
   now: Date
@@ -171,22 +177,38 @@ function ChildCard({
   const since = active ? new Date(active.start) : awakeFrom
   const forgotten = active ? forgottenEnd(active, plan, now) : null
   return (
-    <article className="child-card" style={{ borderColor: child.color }}>
+    <article className="child-card">
       <button type="button" className="card-open" onClick={onOpen}>
         <span className="avatar" style={{ background: child.color }} aria-hidden="true">
           {name.slice(0, 1)}
         </span>
         <span>
           <strong>{name}</strong>
-          <span className={asleep ? 'state asleep' : 'state awake'}>
-            {asleep && since
-              ? `Asleep ${formatCounter(since, now)}`
-              : `Awake ${since ? formatCounter(since, now) : '—'}`}
-          </span>
         </span>
       </button>
-      <p className="guidance">{asleep ? plan.headline : plan.headline}</p>
-      {!asleep && plan.next && <p className="reason">{plan.next.reason}</p>}
+      {rows.length > 0 ? (
+        <ol className="schedule" aria-label={`Suggested day for ${name}`}>
+          {rows.map((row) => (
+            <li key={row.key} className={row.tone}>
+              <span className="when">{row.time}</span>
+              <span className="what">
+                <span className="what-line">
+                  <span>{row.label}</span>
+                  {row.tone === 'next' && <span className="pill">Next</span>}
+                  {row.tone === 'now' && <span className="pill">Now</span>}
+                </span>
+                {row.detail && <small>{row.detail}</small>}
+                {row.reason && <small className="row-reason">{row.reason}</small>}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="guidance">{plan.headline}</p>
+      )}
+      <p className={asleep ? 'state asleep' : 'state awake'}>
+        {asleep && since ? `Asleep ${formatCounter(since, now)}` : `Awake ${since ? formatCounter(since, now) : '—'}`}
+      </p>
       {plan.transitionNote && <p className="reason">{plan.transitionNote}</p>}
       {active && forgotten && (
         <div className="forgotten">
@@ -206,6 +228,68 @@ function ChildCard({
       </div>
     </article>
   )
+}
+
+type ScheduleRow = {
+  key: string
+  time: string
+  label: string
+  detail?: string
+  tone: 'done' | 'now' | 'next' | 'later'
+  reason?: string
+}
+
+function scheduleRows(plan: DayPlan, events: SleepEvent[], childId: string, now: Date, active?: SleepEvent): ScheduleRow[] {
+  if (!plan.age) return []
+  const today = dayByKey(reconstructDays(childId, events, now), dateKey(now))
+  const night = active?.kind === 'night'
+  const rows: ScheduleRow[] = []
+  if (!night && today?.wake) {
+    rows.push({ key: 'wake', time: formatClock(today.wake), label: 'Woke', tone: 'done' })
+  } else if (!night && plan.assumedWake) {
+    rows.push({ key: 'wake', time: '07:00', label: 'Wake', detail: 'Plan starts here', tone: 'later' })
+  }
+  if (!night) {
+    today?.naps.forEach((nap, index) => {
+      rows.push({
+        key: nap.eventId,
+        time: `${formatClock(nap.start)}–${formatClock(nap.end)}`,
+        label: `Nap ${index + 1}`,
+        detail: formatDuration(nap.minutes),
+        tone: 'done',
+      })
+    })
+  }
+  if (active) {
+    rows.push({
+      key: 'now',
+      time: plan.asleepUntil ? formatClock(plan.asleepUntil) : 'Now',
+      label: night ? 'Awake around' : `Nap ${(today?.naps.length ?? 0) + 1}`,
+      detail: night ? 'Night sleep' : 'Asleep now',
+      tone: 'now',
+    })
+  }
+  plan.naps.forEach((nap, index) => {
+    const next = !active && index === 0
+    rows.push({
+      key: `nap-${nap.index}`,
+      time: `${formatClock(nap.windowStart)}–${formatClock(nap.windowEnd)}`,
+      label: nap.catnap ? 'Short nap' : `Nap ${nap.index}`,
+      detail: `about ${formatDuration(nap.lengthMin)}`,
+      tone: next ? 'next' : 'later',
+      reason: next ? nap.reason : undefined,
+    })
+  })
+  if (plan.bedtimeWindowStart && plan.bedtimeWindowEnd) {
+    const nextBed = !active && plan.naps.length === 0
+    rows.push({
+      key: 'bed',
+      time: `${formatClock(plan.bedtimeWindowStart)}–${formatClock(plan.bedtimeWindowEnd)}`,
+      label: 'Bedtime',
+      tone: nextBed ? 'next' : 'later',
+    })
+  }
+  return rows
 }
 
 function awakeFrom(events: SleepEvent[], childId: string): Date | null {

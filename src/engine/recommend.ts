@@ -48,6 +48,8 @@ export interface DayPlan {
   transitionNote: string | null
   headline: string
   asleepUntil: Date | null
+  /** True when the day plan starts from 07:00 because no wake-up was logged. */
+  assumedWake: boolean
 }
 
 export interface TwinSyncPlan {
@@ -75,48 +77,48 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
   const running = runningSleep(child.id, events)
   const { plannedCount, transitionNote } = chooseNapCount(table, stats, days, todayKey, profile.scheduleOverride)
   const usualWake = average(stats.wakeMinutes)
-
+  let asleepUntil: Date | null = null
   if (running) {
-    const length = blendedLength(table, stats, plannedCount, Math.max(1, (today?.naps.length ?? 0) + (running.kind === 'nap' ? 1 : 0)))
-    const until = addMinutes(new Date(running.start), running.kind === 'night' ? midpoint(table.nightSleep) : length)
-    return {
-      childId: child.id,
-      age,
+    const length = blendedLength(
       table,
-      naps: [],
-      next: null,
-      bedtime: null,
-      bedtimeWindowStart: null,
-      bedtimeWindowEnd: null,
-      transitionNote,
-      headline: running.kind === 'night' ? 'Night sleep in progress' : `Likely awake around ${formatClock(until)}`,
-      asleepUntil: until,
-    }
+      stats,
+      plannedCount,
+      Math.max(1, (today?.naps.length ?? 0) + (running.kind === 'nap' ? 1 : 0)),
+    )
+    asleepUntil = addMinutes(new Date(running.start), running.kind === 'night' ? midpoint(table.nightSleep) : length)
   }
 
   const anchor = awakeSince(today, child.id, events, now)
-  const completed = today?.naps.filter((nap) => nap.valid || nap.minutes > 0) ?? []
+  const logged = today?.naps.filter((nap) => nap.valid || nap.minutes > 0) ?? []
+  const completed = running?.kind === 'night' ? [] : logged
+  const assumedWake = !running && anchor.reason.startsWith('Based on age')
   const naps: PlannedNap[] = []
-  let cursor = anchor.since
-  let reasonPrefix = anchor.reason
+  let cursor = asleepUntil ?? anchor.since
+  let reasonPrefix = running ? '' : anchor.reason
   const disableIntraday = Boolean(profile.scheduleOverride?.disableIntraday)
-  const daySleepSoFar = completed.reduce((sum, nap) => sum + nap.minutes, 0)
-  const behind = daySleepSoFar < table.daySleep.min * 0.5 && completed.length >= 1 && minutesOfDay(now) >= 13 * 60
+  const daySleepSoFar = logged.reduce((sum, nap) => sum + nap.minutes, 0)
+  const behind =
+    running?.kind !== 'night' &&
+    daySleepSoFar < table.daySleep.min * 0.5 &&
+    logged.length >= 1 &&
+    minutesOfDay(now) >= 13 * 60
+  const startIndex = running?.kind === 'nap' ? completed.length + 2 : completed.length + 1
+  const bedAnchor = running?.kind === 'night' && asleepUntil ? asleepUntil : now
 
-  for (let index = completed.length + 1; index <= plannedCount; index += 1) {
+  for (let index = startIndex; index <= plannedCount; index += 1) {
     const band = wakeForPosition(table, index, plannedCount)
     let wakeMinutes = blendedWake(stats, plannedCount, index, band, profile.scheduleOverride)
     const previous = completed[completed.length - 1]
     let reason = reasonPrefix || 'Age-based wake window'
     if (!disableIntraday) {
-      if (index === completed.length + 1 && previous && previous.minutes < SHORT_NAP_MINUTES) {
+      if (!running && index === completed.length + 1 && previous && previous.minutes < SHORT_NAP_MINUTES) {
         wakeMinutes = band.min
         reason = `Shorter wake window after a ${Math.round(previous.minutes)} min nap`
-      } else if (index === completed.length + 1 && previous && previous.minutes >= longNapCut(table.napLength)) {
+      } else if (!running && index === completed.length + 1 && previous && previous.minutes >= longNapCut(table.napLength)) {
         wakeMinutes = band.max
         reason = 'A long nap can support a slightly longer wake window'
       }
-      if (index === 1 && isEarlyWake(anchor.since, usualWake)) {
+      if (index === 1 && isEarlyWake(cursor, usualWake)) {
         wakeMinutes = band.min
         reason = 'Early wake-up, so the first wake window stays short'
       }
@@ -127,7 +129,7 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
     }
     wakeMinutes = profile.scheduleOverride ? wakeMinutes : clampToRange(wakeMinutes, band)
     let start = addMinutes(cursor, wakeMinutes)
-    if (index === completed.length + 1 && start.getTime() < now.getTime() - 5 * 60_000) {
+    if (!running && index === completed.length + 1 && start.getTime() < now.getTime() - 5 * 60_000) {
       start = now
       reason = 'Wake window already passed — watch sleepy cues'
     }
@@ -135,7 +137,7 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
     if (profile.scheduleOverride?.napLengthsMin && profile.scheduleOverride.napLengthsMin[index - 1]) {
       length = profile.scheduleOverride.napLengthsMin[index - 1]
     }
-    const bedtimeEnd = atMinutes(now, table.bedtimeEnd)
+    const bedtimeEnd = atMinutes(bedAnchor, table.bedtimeEnd)
     const lastWake = profile.scheduleOverride ? table.wakeLast.min : midpoint(table.wakeLast)
     const latestFinish = addMinutes(bedtimeEnd, -lastWake)
     let catnap = false
@@ -176,18 +178,23 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
   let bedMinutes = blendedBedWake(table, stats, profile.scheduleOverride)
   if (!disableIntraday && behind) bedMinutes = Math.max(table.wakeLast.min, bedMinutes * 0.9)
   let bedtime = addMinutes(lastEnd, bedMinutes)
-  const bedStart = atMinutes(now, table.bedtimeStart)
-  const bedEnd = atMinutes(now, table.bedtimeEnd)
+  const bedStart = atMinutes(bedAnchor, table.bedtimeStart)
+  const bedEnd = atMinutes(bedAnchor, table.bedtimeEnd)
   if (table.bedtimeEnd > 0) {
     if (bedtime.getTime() > bedEnd.getTime()) bedtime = bedEnd
     if (bedtime.getTime() < bedStart.getTime() && lastEnd.getTime() < bedStart.getTime()) bedtime = bedStart
   }
   const next = naps[0] ?? null
-  const headline = next
-    ? `Next nap ${formatClock(next.windowStart)}–${formatClock(next.windowEnd)}`
-    : bedtime
-      ? `Bedtime around ${formatClock(bedtime)}`
-      : 'Log a wake-up to start the day plan'
+  const headline =
+    running?.kind === 'night'
+      ? 'Night sleep in progress'
+      : running && asleepUntil
+        ? `Likely awake around ${formatClock(asleepUntil)}`
+        : next
+          ? `Next nap ${formatClock(next.windowStart)}–${formatClock(next.windowEnd)}`
+          : bedtime
+            ? `Bedtime around ${formatClock(bedtime)}`
+            : 'Log a wake-up to start the day plan'
 
   return {
     childId: child.id,
@@ -200,7 +207,8 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
     bedtimeWindowEnd: table.bedtimeEnd > 0 ? bedEnd : null,
     transitionNote,
     headline,
-    asleepUntil: null,
+    asleepUntil,
+    assumedWake,
   }
 }
 
@@ -245,6 +253,7 @@ function emptyPlan(childId: string, headline: string): DayPlan {
     transitionNote: null,
     headline,
     asleepUntil: null,
+    assumedWake: false,
   }
 }
 

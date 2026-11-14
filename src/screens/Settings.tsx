@@ -122,7 +122,7 @@ export function Settings({ now }: { now: Date }) {
         </label>
         <label className="toggle">
           <input type="checkbox" checked={snap.nightManual} onChange={(input) => store.setNightManual(input.target.checked)} />
-          <span>Night mode now</span>
+          <span>Larger buttons now</span>
         </label>
       </fieldset>
 
