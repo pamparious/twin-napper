@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-14T16:56:50.776Z",
+  "updatedAt": "2026-11-14T16:56:59.288Z",
   "children": [
     {
       "id": "twin-a",
       "nickname": "JP",
       "birthDate": "2026-06-23",
-      "dueDate": "",
+      "dueDate": "2026-07-21",
       "color": "#64D2FF"
     },
     {
