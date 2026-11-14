@@ -179,7 +179,9 @@ function ChildCard({
         <span>
           <strong>{name}</strong>
           <span className={asleep ? 'state asleep' : 'state awake'}>
-            {asleep ? `Asleep ${formatCounter(since, now)}` : `Awake ${since ? formatCounter(since, now) : '—'}`}
+            {asleep && since
+              ? `Asleep ${formatCounter(since, now)}`
+              : `Awake ${since ? formatCounter(since, now) : '—'}`}
           </span>
         </span>
       </button>

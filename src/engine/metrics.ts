@@ -1,6 +1,6 @@
 import type { SleepEvent } from '../model'
 import { activeEvents } from '../model'
-import { shiftDateKey, zonedTimeToUtc, addMinutes, minutesBetween } from './time'
+import { dateKey, shiftDateKey, zonedTimeToUtc, addMinutes, minutesBetween } from './time'
 
 export interface DayBlock {
   id: string

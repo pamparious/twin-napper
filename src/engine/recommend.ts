@@ -105,7 +105,7 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
 
   for (let index = completed.length + 1; index <= plannedCount; index += 1) {
     const band = wakeForPosition(table, index, plannedCount)
-    let wakeMinutes = blendedWake(table, stats, plannedCount, index, band, profile.scheduleOverride)
+    let wakeMinutes = blendedWake(stats, plannedCount, index, band, profile.scheduleOverride)
     const previous = completed[completed.length - 1]
     let reason = reasonPrefix || 'Age-based wake window'
     if (!disableIntraday) {
@@ -294,7 +294,6 @@ function longNapCut(band: Range): number {
 }
 
 function blendedWake(
-  table: AgeRow,
   stats: PersonalStats,
   napCount: number,
   index: number,
