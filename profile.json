@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-14T17:46:05.235Z",
+  "updatedAt": "2026-11-14T17:46:18.888Z",
   "children": [
     {
       "id": "twin-a",
@@ -21,7 +21,7 @@
     "nightEnd": "06:00",
     "bedtimeStart": "19:00",
     "bedtimeEnd": "20:00",
-    "twinSync": false
+    "twinSync": true
   },
   "scheduleOverride": null
 }
