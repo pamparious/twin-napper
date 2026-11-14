@@ -1,0 +1,27 @@
+{
+  "updatedAt": "1970-01-01T00:00:00.000Z",
+  "children": [
+    {
+      "id": "twin-a",
+      "nickname": "A",
+      "birthDate": "",
+      "dueDate": "",
+      "color": "#64D2FF"
+    },
+    {
+      "id": "twin-b",
+      "nickname": "B",
+      "birthDate": "",
+      "dueDate": "",
+      "color": "#FFD60A"
+    }
+  ],
+  "settings": {
+    "nightStart": "18:30",
+    "nightEnd": "06:00",
+    "bedtimeStart": "19:00",
+    "bedtimeEnd": "20:00",
+    "twinSync": false
+  },
+  "scheduleOverride": null
+}
