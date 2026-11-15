@@ -144,18 +144,18 @@
     "id": "bff1f493-b060-45df-af56-606531407116",
     "childId": "twin-a",
     "start": "2026-11-15T15:35:01.473Z",
-    "end": null,
+    "end": "2026-11-15T16:12:45.991Z",
     "kind": "nap",
-    "updatedAt": "2026-11-15T15:35:02.083Z",
+    "updatedAt": "2026-11-15T16:12:46.706Z",
     "updatedBy": "Dad"
   },
   {
     "id": "b2d85ba0-7391-459a-91b5-24f87cc381a9",
     "childId": "twin-b",
     "start": "2026-11-15T15:35:32.484Z",
-    "end": null,
+    "end": "2026-11-15T16:12:45.991Z",
     "kind": "nap",
-    "updatedAt": "2026-11-15T15:35:33.445Z",
+    "updatedAt": "2026-11-15T16:12:46.707Z",
     "updatedBy": "Dad"
   }
 ]
