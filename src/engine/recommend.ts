@@ -50,6 +50,7 @@ export interface DayPlan {
   asleepUntil: Date | null
   /** True when the day plan starts from 07:00 because no wake-up was logged. */
   assumedWake: boolean
+  tips: string[]
 }
 
 export interface TwinSyncPlan {
@@ -77,25 +78,68 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
   const running = runningSleep(child.id, events)
   const { plannedCount, transitionNote } = chooseNapCount(table, stats, days, todayKey, profile.scheduleOverride)
   const usualWake = average(stats.wakeMinutes)
+  const disableIntraday = Boolean(profile.scheduleOverride?.disableIntraday)
   let asleepUntil: Date | null = null
-  if (running) {
-    const length = blendedLength(
-      table,
-      stats,
-      plannedCount,
-      Math.max(1, (today?.naps.length ?? 0) + (running.kind === 'nap' ? 1 : 0)),
-    )
-    asleepUntil = addMinutes(new Date(running.start), running.kind === 'night' ? midpoint(table.nightSleep) : length)
+  let bedtimeLimited = false
+  if (running?.kind === 'night') {
+    asleepUntil = addMinutes(new Date(running.start), midpoint(table.nightSleep))
+  } else if (running) {
+    const runningIndex = (today?.naps.length ?? 0) + 1
+    const fixedLength = profile.scheduleOverride?.napLengthsMin?.[runningIndex - 1]
+    const length = fixedLength || blendedLength(table, stats, plannedCount, runningIndex)
+    asleepUntil = addMinutes(new Date(running.start), length)
   }
 
   const anchor = awakeSince(today, child.id, events, now)
   const logged = today?.naps.filter((nap) => nap.valid || nap.minutes > 0) ?? []
   const completed = running?.kind === 'night' ? [] : logged
+  const tips: string[] = []
+  const shortCount = logged.filter((nap, index) => nap.minutes + 10 < blendedLength(table, stats, plannedCount, index + 1)).length
+  if (running?.kind === 'nap' && asleepUntil) {
+    const start = new Date(running.start)
+    const runningIndex = logged.length + 1
+    const fixedLength = profile.scheduleOverride?.napLengthsMin?.[runningIndex - 1]
+    let length = fixedLength || minutesBetween(start, asleepUntil)
+    const previousNap = logged[logged.length - 1]
+    let stretched: string | null = null
+    if (!fixedLength && !disableIntraday && previousNap) {
+      const expectedPrevious = blendedLength(table, stats, plannedCount, logged.length)
+      const longer = longerNapAfterShort(table, length, previousNap.minutes, expectedPrevious)
+      if (longer) {
+        length = longer
+        stretched = `This nap should run about ${Math.round(longer)} min. The one before it was only ${Math.round(previousNap.minutes)} min.`
+      }
+    }
+    const limit = !disableIntraday && runningIndex === plannedCount ? bedtimeLimit(table, profile.scheduleOverride, now) : null
+    const capped = limit ? capNapForBedtime(start, length, limit) : { length, capped: 'none' as const }
+    if (capped.capped === 'catnap') {
+      asleepUntil = addMinutes(start, capped.length)
+      bedtimeLimited = true
+      tips.push(
+        asleepUntil.getTime() <= now.getTime()
+          ? 'This nap has reached the bedtime limit. Wake now so bedtime stays in range.'
+          : 'Keep this nap under 45 minutes so bedtime can stay in the saved range.',
+      )
+    } else if (capped.capped === 'skip' && limit) {
+      asleepUntil = limit.getTime() > start.getTime() ? limit : now
+      bedtimeLimited = true
+      tips.push(
+        asleepUntil.getTime() <= now.getTime()
+          ? 'This nap has run into the bedtime window. Wake now so the night does not start late.'
+          : `End this nap by ${formatClock(limit)} so bedtime can stay in the saved range.`,
+      )
+    } else {
+      asleepUntil = addMinutes(start, length)
+      if (stretched) tips.push(stretched)
+      if (shortCount >= 2) tips.push('Several naps today were shorter than usual. The next one is longer so some of that sleep is made up.')
+    }
+  } else if (shortCount >= 2) {
+    tips.push('Several naps today were shorter than usual. The next one is longer so some of that sleep is made up.')
+  }
   const assumedWake = !running && anchor.reason.startsWith('Based on age')
   const naps: PlannedNap[] = []
   let cursor = asleepUntil ?? anchor.since
   let reasonPrefix = running ? '' : anchor.reason
-  const disableIntraday = Boolean(profile.scheduleOverride?.disableIntraday)
   const daySleepSoFar = logged.reduce((sum, nap) => sum + nap.minutes, 0)
   const behind =
     running?.kind !== 'night' &&
@@ -111,9 +155,13 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
     const previous = completed[completed.length - 1]
     let reason = reasonPrefix || 'Age-based wake window'
     if (!disableIntraday) {
+      const expectedPrevious = previous ? blendedLength(table, stats, plannedCount, completed.length) : 0
       if (!running && index === completed.length + 1 && previous && previous.minutes < SHORT_NAP_MINUTES) {
         wakeMinutes = band.min
         reason = `Shorter wake window after a ${Math.round(previous.minutes)} min nap`
+      } else if (!running && index === completed.length + 1 && previous && previous.minutes < expectedPrevious * 0.75) {
+        wakeMinutes = band.min + (wakeMinutes - band.min) * 0.45
+        reason = `Slightly shorter wake window after a ${Math.round(previous.minutes)} min nap`
       } else if (!running && index === completed.length + 1 && previous && previous.minutes >= longNapCut(table.napLength)) {
         wakeMinutes = band.max
         reason = 'A long nap can support a slightly longer wake window'
@@ -121,10 +169,12 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
       if (index === 1 && isEarlyWake(cursor, usualWake)) {
         wakeMinutes = band.min
         reason = 'Early wake-up, so the first wake window stays short'
+        tips.push('The first wake window stays short after an early wake-up.')
       }
       if (behind && index > completed.length) {
         wakeMinutes = Math.max(band.min, wakeMinutes * 0.85)
         reason = 'Daytime sleep is behind the usual target'
+        if (index === startIndex) tips.push('Daytime sleep is behind the usual target, so the remaining wake windows are shorter.')
       }
     }
     wakeMinutes = profile.scheduleOverride ? wakeMinutes : clampToRange(wakeMinutes, band)
@@ -134,25 +184,34 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
       reason = 'Wake window already passed — watch sleepy cues'
     }
     let length = blendedLength(table, stats, plannedCount, index)
-    if (profile.scheduleOverride?.napLengthsMin && profile.scheduleOverride.napLengthsMin[index - 1]) {
-      length = profile.scheduleOverride.napLengthsMin[index - 1]
+    const fixedLength = profile.scheduleOverride?.napLengthsMin?.[index - 1]
+    if (fixedLength) length = fixedLength
+    if (!fixedLength && !disableIntraday && !running && index === completed.length + 1 && previous) {
+      const expectedPrevious = blendedLength(table, stats, plannedCount, completed.length)
+      const longer = longerNapAfterShort(table, length, previous.minutes, expectedPrevious)
+      if (longer) {
+        length = longer
+        const minutes = Math.round(previous.minutes)
+        const aim = Math.round(length)
+        reason = previous.minutes < SHORT_NAP_MINUTES
+          ? `Shorter wake window after a ${minutes} min nap. Next nap about ${aim} min`
+          : `Next nap about ${aim} min after a ${minutes} min nap`
+        tips.push(`The ${minutes} min nap was shorter than planned. Aim for about ${aim} min on the next one.`)
+      }
     }
-    const bedtimeEnd = atMinutes(bedAnchor, table.bedtimeEnd)
-    const lastWake = profile.scheduleOverride ? table.wakeLast.min : midpoint(table.wakeLast)
-    const latestFinish = addMinutes(bedtimeEnd, -lastWake)
     let catnap = false
-    if (!disableIntraday && index === plannedCount) {
-      const fullEnd = addMinutes(start, length)
-      if (fullEnd.getTime() > latestFinish.getTime()) {
-        const catnapLength = Math.min(45, Math.max(30, minutesBetween(start, latestFinish)))
-        if (minutesBetween(start, latestFinish) >= 30) {
-          length = catnapLength
-          catnap = true
-          reason = 'A short catnap so bedtime stays put'
-        } else {
-          reason = 'Skip this nap and head toward bedtime'
-          break
-        }
+    if (!disableIntraday && index === plannedCount && table.bedtimeEnd > 0) {
+      const latestFinish = bedtimeLimit(table, profile.scheduleOverride, bedAnchor)
+      const result = capNapForBedtime(start, length, latestFinish)
+      if (result.capped === 'catnap') {
+        length = result.length
+        catnap = true
+        reason = 'A short catnap so bedtime stays put'
+        tips.push('Keep this nap under 45 minutes so bedtime can stay in the saved range.')
+      } else if (result.capped === 'skip') {
+        reason = 'Skip this nap and head toward bedtime'
+        tips.push('Skip this nap and head toward bedtime so the night does not start late.')
+        break
       }
     }
     const half = windowHalf(stats, plannedCount, index)
@@ -188,9 +247,11 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
   const headline =
     running?.kind === 'night'
       ? 'Night sleep in progress'
-      : running && asleepUntil
-        ? `Likely awake around ${formatClock(asleepUntil)}`
-        : next
+      : bedtimeLimited && asleepUntil && asleepUntil.getTime() <= now.getTime()
+        ? 'Wake now so bedtime stays in range'
+        : running && asleepUntil
+          ? `Likely awake around ${formatClock(asleepUntil)}`
+          : next
           ? `Next nap ${formatClock(next.windowStart)}–${formatClock(next.windowEnd)}`
           : bedtime
             ? `Bedtime around ${formatClock(bedtime)}`
@@ -209,6 +270,7 @@ export function planChild(child: { id: string; birthDate: string; dueDate: strin
     headline,
     asleepUntil,
     assumedWake,
+    tips: [...new Set(tips)],
   }
 }
 
@@ -254,7 +316,32 @@ function emptyPlan(childId: string, headline: string): DayPlan {
     headline,
     asleepUntil: null,
     assumedWake: false,
+    tips: [],
   }
+}
+
+function bedtimeLimit(table: AgeRow, override: ScheduleOverride | null, day: Date): Date {
+  const lastWake = override ? table.wakeLast.min : midpoint(table.wakeLast)
+  return addMinutes(atMinutes(day, table.bedtimeEnd), -lastWake)
+}
+
+function capNapForBedtime(start: Date, length: number, latestFinish: Date): { length: number; capped: 'none' | 'catnap' | 'skip' } {
+  const fullEnd = addMinutes(start, length)
+  if (fullEnd.getTime() <= latestFinish.getTime()) return { length, capped: 'none' }
+  const room = minutesBetween(start, latestFinish)
+  if (room >= 30) return { length: Math.min(45, Math.max(30, room)), capped: 'catnap' }
+  return { length, capped: 'skip' }
+}
+
+function longerNapAfterShort(table: AgeRow, nextBase: number, previousMinutes: number, expectedPrevious: number): number | null {
+  const underMinimum = previousMinutes < Math.max(SHORT_NAP_MINUTES, table.napLength.min)
+  const shortfall = expectedPrevious - previousMinutes
+  if (!underMinimum && shortfall < 10) return null
+  const fraction = previousMinutes < SHORT_NAP_MINUTES ? 0.72 : 0.58
+  const bandTarget = table.napLength.min + (table.napLength.max - table.napLength.min) * fraction
+  const recovered = nextBase + Math.min(30, Math.max(0, shortfall) * 0.5)
+  const length = Math.min(table.napLength.max, Math.max(nextBase, recovered, underMinimum ? bandTarget : nextBase))
+  return length > nextBase + 1 ? length : null
 }
 
 function chooseNapCount(

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { blankEvent, EditSheet } from '../components/EditSheet'
+import { ScheduleList, type ScheduleRow } from '../components/ScheduleList'
 import { dayByKey, reconstructDays } from '../engine/days'
 import { addMinutes, dateKey, formatClock, formatCounter, formatDuration, formatLongDate, inClockRange, minutesOfDay, roundToFive } from '../engine/time'
 import { planChild, suggestedWakeTime, twinSyncPlan, type DayPlan } from '../engine/recommend'
@@ -20,6 +21,7 @@ export function Home({
 }) {
   const snap = useSnapshot()
   const [draft, setDraft] = useState<SleepEvent | null>(null)
+  const [editing, setEditing] = useState<SleepEvent | null>(null)
   const plans = snap.profile.children.map((child) => planChild(child, snap.events, snap.profile, now))
   const shared = snap.profile.settings.twinSync ? twinSyncPlan(plans) : null
 
@@ -118,6 +120,10 @@ export function Home({
               onUndo('End time updated', () => store.saveEvent({ ...previous, end: null }))
             }}
             onLog={() => setDraft(blankEvent(child.id, snap.profile, now))}
+            onEdit={(id) => {
+              const found = activeEvents(snap.events).find((item) => item.id === id)
+              if (found) setEditing(found)
+            }}
           />
         ))}
       </div>
@@ -126,6 +132,28 @@ export function Home({
           {bothAsleep ? 'Wake both' : 'Sleep both'}
         </button>
       </div>
+      {editing && (
+        <EditSheet
+          event={editing}
+          creating={false}
+          children={snap.profile.children}
+          events={snap.events}
+          profile={snap.profile}
+          onClose={() => setEditing(null)}
+          onSave={(event) => {
+            const previous = editing
+            store.saveEvent(event)
+            setEditing(null)
+            onUndo('Sleep updated', () => store.saveEvent(previous))
+          }}
+          onDelete={() => {
+            const previous = editing
+            store.removeEvent(previous.id)
+            setEditing(null)
+            onUndo('Sleep deleted', () => store.saveEvent({ ...previous, deleted: false }))
+          }}
+        />
+      )}
       {draft && (
         <EditSheet
           event={draft}
@@ -159,6 +187,7 @@ function ChildCard({
   onStop,
   onFix,
   onLog,
+  onEdit,
 }: {
   child: Child
   name: string
@@ -172,6 +201,7 @@ function ChildCard({
   onStop: (event: SleepEvent) => void
   onFix: (event: SleepEvent, end: Date) => void
   onLog: () => void
+  onEdit: (eventId: string) => void
 }) {
   const asleep = Boolean(active)
   const since = active ? new Date(active.start) : awakeFrom
@@ -187,24 +217,16 @@ function ChildCard({
         </span>
       </button>
       {rows.length > 0 ? (
-        <ol className="schedule" aria-label={`Suggested day for ${name}`}>
-          {rows.map((row) => (
-            <li key={row.key} className={row.tone}>
-              <span className="when">{row.time}</span>
-              <span className="what">
-                <span className="what-line">
-                  <span>{row.label}</span>
-                  {row.tone === 'next' && <span className="pill">Next</span>}
-                  {row.tone === 'now' && <span className="pill">Now</span>}
-                </span>
-                {row.detail && <small>{row.detail}</small>}
-                {row.reason && <small className="row-reason">{row.reason}</small>}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <ScheduleList label={`Suggested day for ${name}`} rows={rows} onEdit={onEdit} />
       ) : (
         <p className="guidance">{plan.headline}</p>
+      )}
+      {plan.tips.length > 0 && (
+        <ul className="tips">
+          {plan.tips.map((tip) => (
+            <li key={tip}>{tip}</li>
+          ))}
+        </ul>
       )}
       <p className={asleep ? 'state asleep' : 'state awake'}>
         {asleep && since ? `Asleep ${formatCounter(since, now)}` : `Awake ${since ? formatCounter(since, now) : '—'}`}
@@ -230,22 +252,17 @@ function ChildCard({
   )
 }
 
-type ScheduleRow = {
-  key: string
-  time: string
-  label: string
-  detail?: string
-  tone: 'done' | 'now' | 'next' | 'later'
-  reason?: string
-}
-
 function scheduleRows(plan: DayPlan, events: SleepEvent[], childId: string, now: Date, active?: SleepEvent): ScheduleRow[] {
   if (!plan.age) return []
-  const today = dayByKey(reconstructDays(childId, events, now), dateKey(now))
+  const todayKey = dateKey(now)
+  const today = dayByKey(reconstructDays(childId, events, now), todayKey)
   const night = active?.kind === 'night'
+  const wakeEvent = activeEvents(events).find(
+    (event) => event.childId === childId && event.kind === 'night' && event.end && dateKey(new Date(event.end)) === todayKey,
+  )
   const rows: ScheduleRow[] = []
   if (!night && today?.wake) {
-    rows.push({ key: 'wake', time: formatClock(today.wake), label: 'Woke', tone: 'done' })
+    rows.push({ key: 'wake', time: formatClock(today.wake), label: 'Woke', detail: 'Night sleep', tone: 'done', eventId: wakeEvent?.id })
   } else if (!night && plan.assumedWake) {
     rows.push({ key: 'wake', time: '07:00', label: 'Wake', detail: 'Plan starts here', tone: 'later' })
   }
@@ -255,9 +272,10 @@ function scheduleRows(plan: DayPlan, events: SleepEvent[], childId: string, now:
         key: nap.eventId,
         time: `${formatClock(nap.start)}–${formatClock(nap.end)}`,
         label: `Nap ${index + 1}`,
-        detail: formatDuration(nap.minutes),
-        tone: 'done',
-      })
+      detail: formatDuration(nap.minutes),
+      tone: 'done',
+      eventId: nap.eventId,
+    })
     })
   }
   if (active) {
@@ -267,6 +285,7 @@ function scheduleRows(plan: DayPlan, events: SleepEvent[], childId: string, now:
       label: night ? 'Awake around' : `Nap ${(today?.naps.length ?? 0) + 1}`,
       detail: night ? 'Night sleep' : 'Asleep now',
       tone: 'now',
+      eventId: active.id,
     })
   }
   plan.naps.forEach((nap, index) => {

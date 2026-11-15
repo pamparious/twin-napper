@@ -29,8 +29,8 @@ export default defineConfig({
         start_url: '/twin-napper/',
         scope: '/twin-napper/',
         display: 'standalone',
-        background_color: '#000000',
-        theme_color: '#000000',
+        background_color: '#111318',
+        theme_color: '#111318',
         lang: 'en',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

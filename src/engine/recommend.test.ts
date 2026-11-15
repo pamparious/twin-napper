@@ -77,6 +77,8 @@ describe('recommendations', () => {
     const expected = addMinutes(new Date(events[1].end as string), table.wakeMiddle.min)
     expect(plan.next?.reason).toMatch(/Shorter wake window/)
     expect(minutesBetween(expected, plan.next!.start)).toBeCloseTo(0, 0)
+    expect(plan.next!.lengthMin).toBeGreaterThan((table.napLength.min + table.napLength.max) / 2)
+    expect(plan.tips.join(' ')).toMatch(/Aim for about/)
   })
 
   it('keeps the first window short after an early wake-up', () => {
@@ -155,6 +157,53 @@ describe('recommendations', () => {
     expect(overridden.transitionNote).toBe('AI plan')
     expect(minutesBetween(new Date(events[1].end as string), overridden.next!.start)).toBeCloseTo(180, 0)
     expect(overridden.naps).toHaveLength(1)
+  })
+
+  it('ends a running last nap at the same time the plan showed before it started', () => {
+    const baby = child()
+    const saved = profile({
+      napCount: 3,
+      wakeWindowsMin: [90, 90, 90],
+      napLengthsMin: [60, 60, 90],
+      bedtimeStart: '19:00',
+      bedtimeEnd: '20:00',
+    })
+    const events = [
+      event({ kind: 'night', start: on(-1, 19, 30), end: on(0, 7, 0) }),
+      event({ kind: 'nap', start: on(0, 9, 0), end: on(0, 10, 0) }),
+      event({ kind: 'nap', start: on(0, 12, 0), end: on(0, 15, 0) }),
+    ]
+    const at = zonedTimeToUtc(2026, 11, 14, 17, 30)
+    const before = planChild(baby, events, saved, at)
+    const during = planChild(baby, [...events, event({ kind: 'nap', start: on(0, 17, 30), end: null })], saved, at)
+    expect(before.next?.catnap).toBe(true)
+    expect(during.asleepUntil).not.toBeNull()
+    expect(minutesBetween(before.next!.end, during.asleepUntil!)).toBeCloseTo(0, 0)
+    expect(during.headline).toMatch(/Likely awake around/)
+    expect(during.tips.join(' ')).toMatch(/bedtime/)
+  })
+
+  it('tells a running nap to stop when it has already passed the bedtime limit', () => {
+    const baby = child()
+    const saved = profile({
+      napCount: 3,
+      wakeWindowsMin: [90, 90, 90],
+      napLengthsMin: [60, 60, 90],
+      bedtimeStart: '19:00',
+      bedtimeEnd: '20:00',
+    })
+    const events = [
+      event({ kind: 'night', start: on(-1, 19, 30), end: on(0, 7, 0) }),
+      event({ kind: 'nap', start: on(0, 9, 0), end: on(0, 10, 0) }),
+      event({ kind: 'nap', start: on(0, 12, 0), end: on(0, 15, 0) }),
+      event({ kind: 'nap', start: on(0, 18, 10), end: null }),
+    ]
+    const at = zonedTimeToUtc(2026, 11, 14, 18, 40)
+    const plan = planChild(baby, events, saved, at)
+    expect(plan.asleepUntil).not.toBeNull()
+    expect(plan.asleepUntil!.getTime()).toBeLessThanOrEqual(at.getTime())
+    expect(plan.headline).toMatch(/Wake now/)
+    expect(plan.tips.join(' ')).toMatch(/bedtime/)
   })
 
   it('keeps the later naps while a nap is still running', () => {
