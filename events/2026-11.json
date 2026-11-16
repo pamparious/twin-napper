@@ -257,5 +257,33 @@
     "note": "",
     "updatedAt": "2026-11-16T18:36:36.016Z",
     "updatedBy": "Dad"
+  },
+  {
+    "id": "5d78cd4c-97a2-4e17-8645-dbaf62195c26",
+    "childId": "twin-b",
+    "start": "2026-11-16T18:26:00.000Z",
+    "end": "2026-11-16T18:36:41.182Z",
+    "kind": "night",
+    "note": "",
+    "updatedAt": "2026-11-16T18:36:45.168Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "d2b33552-ce12-4d95-8cef-1ae2fb61855d",
+    "childId": "twin-a",
+    "start": "2026-11-16T18:37:02.763Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-16T18:37:03.472Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "3854af2c-7560-44f7-8451-d6ae73ce1ef9",
+    "childId": "twin-b",
+    "start": "2026-11-16T18:37:02.763Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-16T18:37:03.473Z",
+    "updatedBy": "Dad"
   }
 ]
