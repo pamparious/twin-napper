@@ -85,8 +85,9 @@
     "start": "2026-11-14T17:57:03.006Z",
     "end": "2026-11-14T17:57:15.054Z",
     "kind": "night",
-    "updatedAt": "2026-11-14T17:57:15.568Z",
-    "updatedBy": "Parent"
+    "updatedAt": "2026-11-17T19:19:23.848Z",
+    "updatedBy": "Dad",
+    "deleted": true
   },
   {
     "id": "d257f132-3740-4079-beab-94ebb7fbd268",
