@@ -358,8 +358,9 @@
     "end": "2026-11-17T19:12:59.211Z",
     "kind": "night",
     "note": "",
-    "updatedAt": "2026-11-17T19:13:09.664Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-17T19:17:58.670Z",
+    "updatedBy": "Dad",
+    "deleted": true
   },
   {
     "id": "2a7e72b0-8fb0-42c3-abd4-ea242b22b809",
