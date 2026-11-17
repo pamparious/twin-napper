@@ -360,5 +360,14 @@
     "note": "",
     "updatedAt": "2026-11-17T19:13:09.664Z",
     "updatedBy": "Dad"
+  },
+  {
+    "id": "2a7e72b0-8fb0-42c3-abd4-ea242b22b809",
+    "childId": "twin-b",
+    "start": "2026-11-17T19:13:18.212Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-17T19:13:19.185Z",
+    "updatedBy": "Dad"
   }
 ]
