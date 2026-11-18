@@ -374,5 +374,15 @@
     "kind": "night",
     "updatedAt": "2026-11-18T07:59:36.167Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "93999639-bc64-4f36-b6c6-8f117405d3c9",
+    "childId": "twin-a",
+    "start": "2026-11-17T18:50:00.000Z",
+    "end": "2026-11-18T07:45:00.000Z",
+    "kind": "night",
+    "note": "",
+    "updatedAt": "2026-11-18T08:01:44.440Z",
+    "updatedBy": "Parent"
   }
 ]
