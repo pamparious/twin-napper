@@ -384,5 +384,23 @@
     "note": "",
     "updatedAt": "2026-11-18T08:01:44.440Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "18040ae1-0a26-4bb3-8a43-d4f3b714d057",
+    "childId": "twin-a",
+    "start": "2026-11-18T11:28:22.916Z",
+    "end": null,
+    "kind": "nap",
+    "updatedAt": "2026-11-18T11:28:23.445Z",
+    "updatedBy": "Parent"
+  },
+  {
+    "id": "be090b0b-0f57-4e61-a0f4-d8456003918b",
+    "childId": "twin-b",
+    "start": "2026-11-18T11:28:22.916Z",
+    "end": null,
+    "kind": "nap",
+    "updatedAt": "2026-11-18T11:28:23.447Z",
+    "updatedBy": "Parent"
   }
 ]
