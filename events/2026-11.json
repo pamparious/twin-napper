@@ -349,10 +349,10 @@
     "id": "5d1771d9-c6f4-4b89-b788-902d2e920d16",
     "childId": "twin-a",
     "start": "2026-11-17T18:55:29.327Z",
-    "end": null,
+    "end": "2026-11-18T07:58:52.101Z",
     "kind": "night",
-    "updatedAt": "2026-11-17T18:55:29.390Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-18T07:58:53.021Z",
+    "updatedBy": "Parent"
   },
   {
     "id": "aad0c385-bd7a-4520-8886-9e0a9690c547",
