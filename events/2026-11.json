@@ -370,9 +370,9 @@
     "id": "2a7e72b0-8fb0-42c3-abd4-ea242b22b809",
     "childId": "twin-b",
     "start": "2026-11-17T18:55:00.000Z",
-    "end": null,
+    "end": "2026-11-18T07:59:35.272Z",
     "kind": "night",
-    "updatedAt": "2026-11-17T19:18:21.341Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-18T07:59:36.167Z",
+    "updatedBy": "Parent"
   }
 ]
