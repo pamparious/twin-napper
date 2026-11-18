@@ -351,8 +351,9 @@
     "start": "2026-11-18T07:43:00.000Z",
     "end": "2026-11-18T07:58:52.101Z",
     "kind": "nap",
-    "updatedAt": "2026-11-18T07:59:00.058Z",
-    "updatedBy": "Parent"
+    "updatedAt": "2026-11-18T07:59:12.067Z",
+    "updatedBy": "Parent",
+    "deleted": true
   },
   {
     "id": "aad0c385-bd7a-4520-8886-9e0a9690c547",
