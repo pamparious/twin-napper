@@ -528,5 +528,23 @@
     "kind": "nap",
     "updatedAt": "2026-11-19T15:51:35.585Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "05abb32b-58cd-4407-9c5a-9a457857ed27",
+    "childId": "twin-a",
+    "start": "2026-11-19T18:05:59.712Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-19T18:05:59.780Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "618ede83-1429-45bb-88d1-9776b603d238",
+    "childId": "twin-b",
+    "start": "2026-11-19T18:05:59.712Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-19T18:05:59.781Z",
+    "updatedBy": "Dad"
   }
 ]
