@@ -497,9 +497,9 @@
     "id": "de86f1c6-9f4b-42be-91b5-e18ae20b74c1",
     "childId": "twin-a",
     "start": "2026-11-19T10:50:00.000Z",
-    "end": null,
+    "end": "2026-11-19T11:25:06.866Z",
     "kind": "nap",
-    "updatedAt": "2026-11-19T11:20:13.751Z",
+    "updatedAt": "2026-11-19T11:25:07.175Z",
     "updatedBy": "Dad"
   }
 ]
