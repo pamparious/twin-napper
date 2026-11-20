@@ -623,10 +623,10 @@
   {
     "id": "755d61f0-75d1-491e-b27d-d5b08699cf41",
     "childId": "twin-b",
-    "start": "2026-11-20T20:33:07.780Z",
+    "start": "2026-11-20T18:50:00.000Z",
     "end": null,
     "kind": "night",
-    "updatedAt": "2026-11-20T20:33:08.057Z",
+    "updatedAt": "2026-11-20T20:35:09.603Z",
     "updatedBy": "Dad"
   }
 ]
