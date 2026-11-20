@@ -598,7 +598,8 @@
     "start": "2026-11-20T15:42:01.195Z",
     "end": "2026-11-20T15:42:20.265Z",
     "kind": "nap",
-    "updatedAt": "2026-11-20T15:42:20.799Z",
-    "updatedBy": "Parent"
+    "updatedAt": "2026-11-20T15:42:25.296Z",
+    "updatedBy": "Parent",
+    "deleted": true
   }
 ]
