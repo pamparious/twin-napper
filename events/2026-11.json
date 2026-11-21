@@ -700,5 +700,23 @@
     "kind": "nap",
     "updatedAt": "2026-11-21T17:45:21.570Z",
     "updatedBy": "Dad"
+  },
+  {
+    "id": "6eb667ce-db6b-4d98-994f-2edac24a8524",
+    "childId": "twin-a",
+    "start": "2026-11-21T20:18:21.562Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-21T20:18:21.999Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "d32b45c1-a16d-49e5-9a1d-968ac9d61bdf",
+    "childId": "twin-b",
+    "start": "2026-11-21T20:18:21.562Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-21T20:18:22.000Z",
+    "updatedBy": "Dad"
   }
 ]
