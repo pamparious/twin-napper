@@ -713,10 +713,10 @@
   {
     "id": "d32b45c1-a16d-49e5-9a1d-968ac9d61bdf",
     "childId": "twin-b",
-    "start": "2026-11-21T20:18:21.562Z",
+    "start": "2026-11-21T19:55:00.000Z",
     "end": null,
     "kind": "night",
-    "updatedAt": "2026-11-21T20:18:22.000Z",
+    "updatedAt": "2026-11-21T20:18:52.232Z",
     "updatedBy": "Dad"
   }
 ]
