@@ -687,18 +687,18 @@
     "id": "e102d2df-5997-4d38-8f18-5319bd365ea3",
     "childId": "twin-a",
     "start": "2026-11-21T17:01:27.636Z",
-    "end": null,
+    "end": "2026-11-21T17:45:20.982Z",
     "kind": "nap",
-    "updatedAt": "2026-11-21T17:01:28.092Z",
+    "updatedAt": "2026-11-21T17:45:21.568Z",
     "updatedBy": "Dad"
   },
   {
     "id": "c96e49be-d214-4500-a760-5a4d26ffabce",
     "childId": "twin-b",
     "start": "2026-11-21T17:01:27.636Z",
-    "end": null,
+    "end": "2026-11-21T17:45:20.982Z",
     "kind": "nap",
-    "updatedAt": "2026-11-21T17:01:28.094Z",
+    "updatedAt": "2026-11-21T17:45:21.570Z",
     "updatedBy": "Dad"
   }
 ]
