@@ -788,7 +788,17 @@
     "start": "2026-11-22T17:20:00.000Z",
     "end": "2026-11-22T21:50:02.301Z",
     "kind": "nap",
-    "updatedAt": "2026-11-22T21:50:03.219Z",
+    "updatedAt": "2026-11-22T21:50:28.450Z",
+    "updatedBy": "Dad",
+    "deleted": true
+  },
+  {
+    "id": "9af5ef07-8975-40ca-a015-f846e961a4ee",
+    "childId": "twin-a",
+    "start": "2026-11-22T21:50:37.301Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-22T21:50:37.371Z",
     "updatedBy": "Dad"
   }
 ]
