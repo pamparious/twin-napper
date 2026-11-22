@@ -795,10 +795,19 @@
   {
     "id": "9af5ef07-8975-40ca-a015-f846e961a4ee",
     "childId": "twin-a",
-    "start": "2026-11-22T21:50:37.301Z",
+    "start": "2026-11-22T18:50:00.000Z",
     "end": null,
     "kind": "night",
-    "updatedAt": "2026-11-22T21:50:37.371Z",
+    "updatedAt": "2026-11-22T21:50:55.919Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "fa78852f-989f-4013-ad0f-2a6cc65e6d57",
+    "childId": "twin-b",
+    "start": "2026-11-22T18:55:00.000Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-22T21:51:15.378Z",
     "updatedBy": "Dad"
   }
 ]
