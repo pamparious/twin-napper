@@ -796,10 +796,10 @@
     "id": "9af5ef07-8975-40ca-a015-f846e961a4ee",
     "childId": "twin-a",
     "start": "2026-11-22T18:50:00.000Z",
-    "end": null,
+    "end": "2026-11-23T07:52:39.384Z",
     "kind": "night",
-    "updatedAt": "2026-11-22T21:50:55.919Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-23T07:52:39.464Z",
+    "updatedBy": "Parent"
   },
   {
     "id": "fa78852f-989f-4013-ad0f-2a6cc65e6d57",
