@@ -832,9 +832,9 @@
     "id": "a47569ac-2bb8-49db-be02-98490ea5beec",
     "childId": "twin-a",
     "start": "2026-11-23T12:27:03.239Z",
-    "end": "2026-11-23T14:09:05.789Z",
+    "end": "2026-11-23T14:00:00.000Z",
     "kind": "nap",
-    "updatedAt": "2026-11-23T14:09:06.342Z",
+    "updatedAt": "2026-11-23T14:09:19.137Z",
     "updatedBy": "Parent"
   },
   {
