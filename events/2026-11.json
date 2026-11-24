@@ -913,18 +913,18 @@
     "id": "8fed71f0-e211-4405-a8f5-a1f7f708aca1",
     "childId": "twin-a",
     "start": "2026-11-24T13:52:35.943Z",
-    "end": null,
+    "end": "2026-11-24T14:28:01.124Z",
     "kind": "nap",
-    "updatedAt": "2026-11-24T13:52:36.045Z",
+    "updatedAt": "2026-11-24T14:28:02.076Z",
     "updatedBy": "Parent"
   },
   {
     "id": "c9bc4b69-611b-4beb-985a-eb81dc8e3474",
     "childId": "twin-b",
     "start": "2026-11-24T13:52:35.943Z",
-    "end": null,
+    "end": "2026-11-24T14:28:01.124Z",
     "kind": "nap",
-    "updatedAt": "2026-11-24T13:52:36.047Z",
+    "updatedAt": "2026-11-24T14:28:02.077Z",
     "updatedBy": "Parent"
   }
 ]
