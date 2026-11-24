@@ -881,5 +881,14 @@
     "kind": "night",
     "updatedAt": "2026-11-24T07:13:27.792Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "f3810ea7-c6e2-4d76-acf6-6c62b8f43692",
+    "childId": "twin-b",
+    "start": "2026-11-24T08:53:42.899Z",
+    "end": null,
+    "kind": "nap",
+    "updatedAt": "2026-11-24T08:53:43.033Z",
+    "updatedBy": "Parent"
   }
 ]
