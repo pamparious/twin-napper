@@ -958,10 +958,10 @@
     "id": "bc0fc111-e698-4920-b2f2-eee0543889f4",
     "childId": "twin-a",
     "start": "2026-11-24T18:45:00.000Z",
-    "end": null,
+    "end": "2026-11-25T08:45:15.723Z",
     "kind": "night",
-    "updatedAt": "2026-11-25T06:53:22.701Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-25T08:45:16.471Z",
+    "updatedBy": "Parent"
   },
   {
     "id": "06300338-7381-4771-b6e3-2935b0154a26",
