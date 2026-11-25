@@ -1030,9 +1030,9 @@
     "id": "15468616-117f-4ec9-8d5c-81e1799c65b9",
     "childId": "twin-b",
     "start": "2026-11-25T15:22:00.000Z",
-    "end": null,
+    "end": "2026-11-25T15:50:07.612Z",
     "kind": "nap",
-    "updatedAt": "2026-11-25T15:27:51.963Z",
+    "updatedAt": "2026-11-25T15:50:07.700Z",
     "updatedBy": "Parent"
   }
 ]
