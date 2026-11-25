@@ -1021,9 +1021,9 @@
     "id": "6d8c03a8-d51b-4328-a79c-98c60b733277",
     "childId": "twin-a",
     "start": "2026-11-25T15:00:21.716Z",
-    "end": null,
+    "end": "2026-11-25T15:35:00.000Z",
     "kind": "nap",
-    "updatedAt": "2026-11-25T15:00:21.807Z",
+    "updatedAt": "2026-11-25T15:50:37.331Z",
     "updatedBy": "Parent"
   },
   {
