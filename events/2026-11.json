@@ -993,10 +993,10 @@
   {
     "id": "d5300f90-f44d-4df6-9855-fce18e10fa65",
     "childId": "twin-b",
-    "start": "2026-11-25T12:21:51.203Z",
-    "end": null,
+    "start": "2026-11-25T11:20:00.000Z",
+    "end": "2026-11-25T12:05:00.000Z",
     "kind": "nap",
-    "updatedAt": "2026-11-25T12:21:51.985Z",
+    "updatedAt": "2026-11-25T12:23:49.191Z",
     "updatedBy": "Parent"
   }
 ]
