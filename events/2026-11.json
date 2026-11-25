@@ -984,10 +984,10 @@
   {
     "id": "cd933600-4860-4d5d-8dcc-a6f842e7fb99",
     "childId": "twin-a",
-    "start": "2026-11-25T12:21:51.203Z",
-    "end": null,
+    "start": "2026-11-25T10:10:00.000Z",
+    "end": "2026-11-25T11:00:00.000Z",
     "kind": "nap",
-    "updatedAt": "2026-11-25T12:21:51.983Z",
+    "updatedAt": "2026-11-25T12:22:51.945Z",
     "updatedBy": "Parent"
   },
   {
