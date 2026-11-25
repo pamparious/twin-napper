@@ -980,5 +980,23 @@
     "kind": "nap",
     "updatedAt": "2026-11-25T09:06:54.143Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "cd933600-4860-4d5d-8dcc-a6f842e7fb99",
+    "childId": "twin-a",
+    "start": "2026-11-25T12:21:51.203Z",
+    "end": null,
+    "kind": "nap",
+    "updatedAt": "2026-11-25T12:21:51.983Z",
+    "updatedBy": "Parent"
+  },
+  {
+    "id": "d5300f90-f44d-4df6-9855-fce18e10fa65",
+    "childId": "twin-b",
+    "start": "2026-11-25T12:21:51.203Z",
+    "end": null,
+    "kind": "nap",
+    "updatedAt": "2026-11-25T12:21:51.985Z",
+    "updatedBy": "Parent"
   }
 ]
