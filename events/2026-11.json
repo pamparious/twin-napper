@@ -931,9 +931,9 @@
     "id": "6e96184a-1e84-4940-a59a-d990410df73e",
     "childId": "twin-a",
     "start": "2026-11-24T16:06:47.699Z",
-    "end": "2026-11-25T06:18:37.647Z",
+    "end": "2026-11-24T16:45:00.000Z",
     "kind": "nap",
-    "updatedAt": "2026-11-25T06:18:38.213Z",
+    "updatedAt": "2026-11-25T06:19:21.950Z",
     "updatedBy": "Dad"
   },
   {
@@ -949,9 +949,18 @@
     "id": "b2c16511-0b8b-42b9-9fc8-34969281606b",
     "childId": "twin-b",
     "start": "2026-11-24T18:50:00.000Z",
+    "end": "2026-11-25T06:52:28.193Z",
+    "kind": "nap",
+    "updatedAt": "2026-11-25T06:52:28.487Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "bc0fc111-e698-4920-b2f2-eee0543889f4",
+    "childId": "twin-a",
+    "start": "2026-11-24T18:45:00.000Z",
     "end": null,
     "kind": "nap",
-    "updatedAt": "2026-11-25T06:18:26.083Z",
+    "updatedAt": "2026-11-25T06:19:48.820Z",
     "updatedBy": "Dad"
   }
 ]
