@@ -950,8 +950,8 @@
     "childId": "twin-b",
     "start": "2026-11-24T18:50:00.000Z",
     "end": "2026-11-25T06:52:28.193Z",
-    "kind": "nap",
-    "updatedAt": "2026-11-25T06:52:28.487Z",
+    "kind": "night",
+    "updatedAt": "2026-11-25T06:53:12.240Z",
     "updatedBy": "Dad"
   },
   {
@@ -959,8 +959,8 @@
     "childId": "twin-a",
     "start": "2026-11-24T18:45:00.000Z",
     "end": null,
-    "kind": "nap",
-    "updatedAt": "2026-11-25T06:19:48.820Z",
+    "kind": "night",
+    "updatedAt": "2026-11-25T06:53:22.701Z",
     "updatedBy": "Dad"
   }
 ]
