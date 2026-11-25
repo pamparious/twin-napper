@@ -931,10 +931,10 @@
     "id": "6e96184a-1e84-4940-a59a-d990410df73e",
     "childId": "twin-a",
     "start": "2026-11-24T16:06:47.699Z",
-    "end": null,
+    "end": "2026-11-25T06:18:37.647Z",
     "kind": "nap",
-    "updatedAt": "2026-11-24T16:06:48.046Z",
-    "updatedBy": "Parent"
+    "updatedAt": "2026-11-25T06:18:38.213Z",
+    "updatedBy": "Dad"
   },
   {
     "id": "4e9c0da6-cf69-463b-82f9-89918cbf4d8f",
@@ -948,10 +948,10 @@
   {
     "id": "b2c16511-0b8b-42b9-9fc8-34969281606b",
     "childId": "twin-b",
-    "start": "2026-11-25T18:50:00.000Z",
+    "start": "2026-11-24T18:50:00.000Z",
     "end": null,
     "kind": "nap",
-    "updatedAt": "2026-11-25T06:18:05.227Z",
+    "updatedAt": "2026-11-25T06:18:26.083Z",
     "updatedBy": "Dad"
   }
 ]
