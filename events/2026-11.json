@@ -1034,5 +1034,23 @@
     "kind": "nap",
     "updatedAt": "2026-11-25T15:50:07.700Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "d6d5d36a-af2d-41c0-8c93-329ad3f39caa",
+    "childId": "twin-a",
+    "start": "2026-11-25T21:21:12.639Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-25T21:21:13.090Z",
+    "updatedBy": "Dad"
+  },
+  {
+    "id": "80614053-2b17-43d0-947e-084ef68e54e8",
+    "childId": "twin-b",
+    "start": "2026-11-25T21:21:12.639Z",
+    "end": null,
+    "kind": "night",
+    "updatedAt": "2026-11-25T21:21:13.094Z",
+    "updatedBy": "Dad"
   }
 ]
