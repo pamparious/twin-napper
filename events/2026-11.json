@@ -1053,5 +1053,14 @@
     "kind": "night",
     "updatedAt": "2026-11-26T06:48:53.684Z",
     "updatedBy": "Parent"
+  },
+  {
+    "id": "509cfc91-5139-455b-8fd8-b3682d3ab98a",
+    "childId": "twin-a",
+    "start": "2026-11-26T06:50:37.171Z",
+    "end": "2026-11-26T06:50:39.171Z",
+    "kind": "nap",
+    "updatedAt": "2026-11-26T06:50:39.970Z",
+    "updatedBy": "Dad"
   }
 ]
