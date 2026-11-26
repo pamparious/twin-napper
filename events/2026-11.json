@@ -1067,10 +1067,10 @@
     "id": "0b00aacd-a179-401c-aeea-3c7f97033aea",
     "childId": "twin-a",
     "start": "2026-11-26T09:48:00.000Z",
-    "end": null,
+    "end": "2026-11-26T10:21:55.733Z",
     "kind": "nap",
-    "updatedAt": "2026-11-26T09:53:12.893Z",
-    "updatedBy": "Parent"
+    "updatedAt": "2026-11-26T10:21:56.605Z",
+    "updatedBy": "Dad"
   },
   {
     "id": "62f0722c-3541-4dac-84c6-849f3873b18d",
