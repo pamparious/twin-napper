@@ -1039,18 +1039,18 @@
     "id": "d6d5d36a-af2d-41c0-8c93-329ad3f39caa",
     "childId": "twin-a",
     "start": "2026-11-25T18:50:00.000Z",
-    "end": null,
+    "end": "2026-11-26T06:48:53.122Z",
     "kind": "night",
-    "updatedAt": "2026-11-25T21:21:56.277Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-26T06:48:53.683Z",
+    "updatedBy": "Parent"
   },
   {
     "id": "80614053-2b17-43d0-947e-084ef68e54e8",
     "childId": "twin-b",
     "start": "2026-11-25T18:50:00.000Z",
-    "end": null,
+    "end": "2026-11-26T06:48:53.122Z",
     "kind": "night",
-    "updatedAt": "2026-11-25T21:21:39.234Z",
-    "updatedBy": "Dad"
+    "updatedAt": "2026-11-26T06:48:53.684Z",
+    "updatedBy": "Parent"
   }
 ]
