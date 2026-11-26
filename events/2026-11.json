@@ -1038,10 +1038,10 @@
   {
     "id": "d6d5d36a-af2d-41c0-8c93-329ad3f39caa",
     "childId": "twin-a",
-    "start": "2026-11-25T18:50:00.000Z",
+    "start": "2026-11-26T06:34:00.000Z",
     "end": "2026-11-26T06:48:53.122Z",
-    "kind": "night",
-    "updatedAt": "2026-11-26T06:48:53.683Z",
+    "kind": "nap",
+    "updatedAt": "2026-11-26T06:49:08.351Z",
     "updatedBy": "Parent"
   },
   {
