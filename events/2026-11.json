@@ -1238,9 +1238,9 @@
     "id": "fc120569-dd0a-4f7f-ae19-bcec180be012",
     "childId": "twin-b",
     "start": "2026-11-28T13:15:00.000Z",
-    "end": null,
+    "end": "2026-11-28T13:53:10.681Z",
     "kind": "nap",
-    "updatedAt": "2026-11-28T13:31:01.728Z",
+    "updatedAt": "2026-11-28T13:53:11.247Z",
     "updatedBy": "Dad"
   }
 ]
